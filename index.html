@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>quantroDemo</title>
+  <meta charset="utf-8">
+  <meta name="description" content="quantroDemo">
+  <meta name="author" content="Stephanie Hicks, Biostatistics, DFCI/HSPH">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>quantroDemo</h1>
+    <h2>When should you use quantile normalization?</h2>
+    <p>Stephanie Hicks, Biostatistics, DFCI/HSPH<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Motivation: raw genomics data is noisy</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><center><img src="assets/figures/cellcomp-density.pdf" width=600/></center></p>
+
+<p><a href="http://www.bioconductor.org/packages/release/data/experiment/html/FlowSorted.Blood.450k.html">Jaffe AE. FlowSorted.Blood.450k: Bioconductor R package version 1.2.0.</a></p>
+
+<!---
+* Study performed to determine if whole blood is a valid source for DNA methylation analysis
+* Raw beta values for 35 
+* 10 cell populations, 6 healthy male blood donors (age 38 + 13.6yrs)
+* Flow cytometry was used to sort the cell populations (avg purities from 81-97$\%$)
+* DNA methylation levels were analyzed on $n$ = 60 samples on Illumina Infinium 450K arrays to compare cell populations and identify differentially methylated CpG sites unique to each cell type
+* The problem is flow cytometry can be very costly in both the amount of blood needed and the work it takes to tag the antibodies. 
+-->
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Motivation: raw genomics data is noisy</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><center><img src="assets/figures/cellcomp-boxplot.pdf" width=600/></center></p>
+
+<p><a href="http://www.bioconductor.org/packages/release/data/experiment/html/FlowSorted.Blood.450k.html">Jaffe AE. FlowSorted.Blood.450k: Bioconductor R package version 1.2.0.</a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Quantile normalization</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>quantile normalization = a non-linear transformation that replaces each intensity score with the mean of the features with the same rank from each array</p>
+
+<p><center><img src="assets/figures/quantile-normalization-example.png" width=700/></center>
+<br><br></p>
+
+<p>Taken from <a href="http://astor.som.jhmi.edu/hex/Arrays/add/material/expressionist_series_4.pdf">The Expressionists Seminar (JHU)</a></p>
+
+<!--- 
+
+order value in each array
+take average across all probes
+substitute probe intensity with average
+put in original order
+
+-->
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Back to motivating example</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><center><img src="assets/figures/cellcomp-boxplot.pdf" width=700/></center></p>
+
+<!--- How different are these 36 distributions? Variability within and between groups? -->
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-5" style="background:;">
+  <hgroup>
+    <h2>Back to motivating example (quantile normalized)</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><center><img src="assets/figures/cellcomp-boxplot-qn.pdf" width=700/></center></p>
+
+<!--- ``In the parts of the distribution with few values (and therefore relatively large interquantile differences), it may introduce considerable changes. The danger is that these large changes could increase the variance across samples for individual features, rather than reducing it as desired."  [Pidsley et al. (2013)]
+
+"It forces the distributions of gene expressions to be essentially identical across samples; this assumption is justified in gene expression studies where only a few genes are expected to be differentially expressed across the samples.? [Jean-Phillpe]  -->
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-6" style="background:;">
+  <hgroup>
+    <h2>quantro: an &quot;ANOVA&quot; on quantile distributions</h2>
+  </hgroup>
+  <article data-timings="">
+    <h4>Test for global differences in distributions across groups</h4>
+
+<p><center>\(\int (F_{ik}^{-1}(u) - \bar{F}_{\cdot \cdot}^{-1}(u))^2 du = \int (\bar{F}_{\cdot k}^{-1}(u) - \bar{F}_{\cdot \cdot}^{-1}(u))^2 du + \int (F_{ik}^{-1}(u) - \bar{F}_{\cdot k}^{-1}(u))^2 du\)</center></p>
+
+<p>where </p>
+
+<p><center>\(F_{ik}^{-1}(u)\) = quantile distribution for \(i^{th}\) sample, \(k^{th}\) group, \(u \in (0, 1)\)</center></p>
+
+<p>and </p>
+
+<p><center>\(\bar{F}_{\cdot k} =\frac{1}{n_k} \sum_{i = 1}^{n_k} F_{ik} \text{ and } \bar{F}_{\cdot \cdot} = \frac{1}{d} \frac{1}{n_k} \sum_{k = 1}^{d} \sum_{i = 1}^{n_k} F_{ik}\)</center></p>
+
+<p>Sum over all \(i\) samples in \(k\) groups \(\Rightarrow\) \(\text{SS}_{total} = \text{ SS}_{between} + \text{ SS}_{within}\)</p>
+
+<p>Then, 
+<center>\(F_{quantro} = \frac{MS_{between}}{MS_{within}} = \frac{ SS_{between} / (d - 1)  }{ SS_{within}/ (n_T - d)}\)</center></p>
+
+<p>Use permutation testing to assess statistical significance</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-7" style="background:;">
+  <hgroup>
+    <h2>Using quantro: installation</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">library(devtools)
+install_github(&quot;quantro&quot;, &quot;stephaniehicks&quot;)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>Using quantro: preprocess raw data</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">library(minfi)
+
+Mset &lt;- preprocessRaw(FlowSorted.Blood.450k)
+pd &lt;- pData(Mset)
+p &lt;- getBeta(Mset, offset = 100)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-9" style="background:;">
+  <hgroup>
+    <h2>Using quantro: preprocess raw data</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">library(minfi)
+
+Mset &lt;- preprocessRaw(FlowSorted.Blood.450k)
+pd &lt;- pData(Mset)
+p &lt;- getBeta(Mset, offset = 100)
+</code></pre>
+
+<pre><code>&gt; dim(p)
+[1] 485512     36
+&gt;
+&gt; head(pd)
+    Sample_Name   CellTypeLong  Group
+    Gran_105      Granulocytes  Gran
+    Gran_218      Granulocytes  Gran
+    Gran_261      Granulocytes  Gran
+    CD4+_105      CD4+ T-cells  CD4T
+    CD4+_218      CD4+ T-cells  CD4T
+    CD4+_261      CD4+ T-cells  CD4T
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-10" style="background:;">
+  <hgroup>
+    <h2>Using quantro</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">library(quantro)
+library(doParallel)
+registerDoParallel(cores=4) # for permutation testing
+qtest &lt;- quantro(p, pd, B=1000)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-11" style="background:;">
+  <hgroup>
+    <h2>Using quantro</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">library(quantro)
+library(doParallel)
+registerDoParallel(cores=4) # for permutation testing
+qtest &lt;- quantro(p, pd, B=1000)
+</code></pre>
+
+<pre><code>&gt; qtest
+quantro: Test for global diffferences in distributions
+   nGroups:  6 
+   nTotSamples:  36 
+   nSamplesinGroups:  6 6 6 6 6 6 
+   mediansANOVAPval:  0.03994
+   quantroStat:  6.69062
+   quantroPvalPerm:  0 
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-12" style="background:;">
+  <hgroup>
+    <h2>Plotting results of permutation test</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">quantroPlot(qtest)
+</code></pre>
+
+<p><center><img src="assets/figures/qtest.pdf" width=600/></center></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-13" style="background:;">
+  <hgroup>
+    <h2>Targeted vs Global differences in distributions</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><center><img src="assets/figures/WhenToQN-Fig6.pdf" width=800/></center></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Motivation: raw genomics data is noisy'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Motivation: raw genomics data is noisy'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Quantile normalization'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Back to motivating example'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Back to motivating example (quantile normalized)'>
+         5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='quantro: an &quot;ANOVA&quot; on quantile distributions'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title='Using quantro: installation'>
+         7
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=8 title='Using quantro: preprocess raw data'>
+         8
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=9 title='Using quantro: preprocess raw data'>
+         9
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=10 title='Using quantro'>
+         10
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=11 title='Using quantro'>
+         11
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=12 title='Plotting results of permutation test'>
+         12
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=13 title='Targeted vs Global differences in distributions'>
+         13
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- MathJax: Fall back to local if CDN offline but local image fonts are not supported (saves >100MB) -->
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        processEscapes: true
+      }
+    });
+  </script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <!-- <script src="https://c328740.ssl.cf1.rackcdn.com/mathjax/2.0-latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script> -->
+  <script>window.MathJax || document.write('<script type="text/x-mathjax-config">MathJax.Hub.Config({"HTML-CSS":{imageFont:null}});<\/script><script src="libraries/widgets/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"><\/script>')
+</script>
+<!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
