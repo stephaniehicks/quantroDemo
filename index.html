@@ -211,7 +211,7 @@ p &lt;- getBeta(Mset, offset = 100)
 
 <slide class="" id="slide-10" style="background:;">
   <hgroup>
-    <h2>Using quantro</h2>
+    <h2>When to use quantile normalization?</h2>
   </hgroup>
   <article data-timings="">
     <pre><code class="r">library(quantro)
@@ -226,17 +226,17 @@ qtest &lt;- quantro(p, phenoDat=pd, B=1000)
 
 <slide class="" id="slide-11" style="background:;">
   <hgroup>
-    <h2>Using quantro</h2>
+    <h2>When to use quantile normalization?</h2>
   </hgroup>
   <article data-timings="">
     <pre><code class="r">library(quantro)
 library(doParallel)
 registerDoParallel(cores=4) # for permutation testing
-qtest &lt;- quantro(p, pd, B=1000)
+qtest &lt;- quantro(p, phenoDat=pd, B=1000)
 </code></pre>
 
 <pre><code>&gt; qtest
-quantro: Test for global diffferences in distributions
+quantro: Test for global differences in distributions
    nGroups:  6 
    nTotSamples:  36 
    nSamplesinGroups:  6 6 6 6 6 6 
@@ -244,6 +244,8 @@ quantro: Test for global diffferences in distributions
    quantroStat:  6.69062
    quantroPvalPerm:  0 
 </code></pre>
+
+<p><strong>Answer</strong>: Quantile normalization may not be appropriate. Global differences in distributions between 6 purified cell populations at \(\alpha = 0.05\) level</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -334,13 +336,13 @@ quantro: Test for global diffferences in distributions
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=10 title='Using quantro'>
+        data-slide=10 title='When to use quantile normalization?'>
          10
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=11 title='Using quantro'>
+        data-slide=11 title='When to use quantile normalization?'>
          11
       </a>
     </li>

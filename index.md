@@ -156,7 +156,7 @@ p <- getBeta(Mset, offset = 100)
 
 ---
 
-## Using quantro
+## When to use quantile normalization?
 
 
 ```r
@@ -168,18 +168,18 @@ qtest <- quantro(p, phenoDat=pd, B=1000)
 
 ---
 
-## Using quantro
+## When to use quantile normalization?
 
 
 ```r
 library(quantro)
 library(doParallel)
 registerDoParallel(cores=4) # for permutation testing
-qtest <- quantro(p, pd, B=1000)
+qtest <- quantro(p, phenoDat=pd, B=1000)
 ```
 
     > qtest
-    quantro: Test for global diffferences in distributions
+    quantro: Test for global differences in distributions
        nGroups:  6 
        nTotSamples:  36 
        nSamplesinGroups:  6 6 6 6 6 6 
@@ -187,6 +187,8 @@ qtest <- quantro(p, pd, B=1000)
        quantroStat:  6.69062
        quantroPvalPerm:  0 
 
+
+**Answer**: Quantile normalization may not be appropriate. Global differences in distributions between 6 purified cell populations at $\alpha = 0.05$ level
 
 ---
 
