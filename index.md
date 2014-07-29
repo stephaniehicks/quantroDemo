@@ -1,5 +1,5 @@
 ---
-title       : quantroDemo
+title       : quantro
 subtitle    : When should you use quantile normalization?
 author      : Stephanie Hicks, Biostatistics, DFCI/HSPH
 job         : 
@@ -9,6 +9,9 @@ hitheme     : tomorrow      #
 widgets     : [mathjax]     # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 knit        : slidify::knit2slides
+github:
+  user: stephaniehicks
+  repo: quantroDemo
 ---
 
 
@@ -16,7 +19,7 @@ knit        : slidify::knit2slides
 
 ## Motivation: raw genomics data is noisy
 
-<center><img src="assets/figures/cellcomp-density.pdf" width=600/></center>
+<center><img src="assets/figures/cellcomp-density.png" width=600/></center>
 
 [Jaffe AE. FlowSorted.Blood.450k: Bioconductor R package version 1.2.0.](http://www.bioconductor.org/packages/release/data/experiment/html/FlowSorted.Blood.450k.html)
 
@@ -34,7 +37,7 @@ knit        : slidify::knit2slides
 
 ## Motivation: raw genomics data is noisy
 
-<center><img src="assets/figures/cellcomp-boxplot.pdf" width=600/></center>
+<center><img src="assets/figures/cellcomp-boxplot.png" width=600/></center>
 
 [Jaffe AE. FlowSorted.Blood.450k: Bioconductor R package version 1.2.0.](http://www.bioconductor.org/packages/release/data/experiment/html/FlowSorted.Blood.450k.html)
 
@@ -52,21 +55,13 @@ quantile normalization = a non-linear transformation that replaces each intensit
 Taken from [The Expressionists Seminar (JHU)](http://astor.som.jhmi.edu/hex/Arrays/add/material/expressionist_series_4.pdf)
 
 
-<!--- 
-
-order value in each array
-take average across all probes
-substitute probe intensity with average
-put in original order
-
--->
 
 
 ---
 
 ## Back to motivating example
 
-<center><img src="assets/figures/cellcomp-boxplot.pdf" width=700/></center>
+<center><img src="assets/figures/cellcomp-boxplot.png" width=700/></center>
 
 <!--- How different are these 36 distributions? Variability within and between groups? -->
 
@@ -75,7 +70,7 @@ put in original order
 
 ## Back to motivating example (quantile normalized)
 
-<center><img src="assets/figures/cellcomp-boxplot-qn.pdf" width=700/></center>
+<center><img src="assets/figures/cellcomp-boxplot-qn.png" width=700/></center>
 
 <!--- ``In the parts of the distribution with few values (and therefore relatively large interquantile differences), it may introduce considerable changes. The danger is that these large changes could increase the variance across samples for individual features, rather than reducing it as desired."  [Pidsley et al. (2013)]
 
@@ -168,7 +163,7 @@ p <- getBeta(Mset, offset = 100)
 library(quantro)
 library(doParallel)
 registerDoParallel(cores=4) # for permutation testing
-qtest <- quantro(p, pd, B=1000)
+qtest <- quantro(p, phenoDat=pd, B=1000)
 ```
 
 ---
@@ -204,7 +199,7 @@ qtest <- quantro(p, pd, B=1000)
 quantroPlot(qtest)
 ```
 
-<center><img src="assets/figures/qtest.pdf" width=600/></center>
+<center><img src="assets/figures/qtest.png" width=600/></center>
 
 
 ---
@@ -213,7 +208,7 @@ quantroPlot(qtest)
 
 ## Targeted vs Global differences in distributions
 
-<center><img src="assets/figures/WhenToQN-Fig6.pdf" width=800/></center>
+<center><img src="assets/figures/WhenToQN-Fig6.png" width=800/></center>
 
 
 

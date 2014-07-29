@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>quantroDemo</title>
+  <title>quantro</title>
   <meta charset="utf-8">
-  <meta name="description" content="quantroDemo">
+  <meta name="description" content="quantro">
   <meta name="author" content="Stephanie Hicks, Biostatistics, DFCI/HSPH">
   <meta name="generator" content="slidify" />
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,10 +32,13 @@
     <!-- LOGO SLIDE -->
         <slide class="title-slide segue nobackground">
   <hgroup class="auto-fadein">
-    <h1>quantroDemo</h1>
+    <h1>quantro</h1>
     <h2>When should you use quantile normalization?</h2>
     <p>Stephanie Hicks, Biostatistics, DFCI/HSPH<br/></p>
   </hgroup>
+    <a href="https://github.com/stephaniehicks/quantroDemo/zipball/gh-pages" class="example">
+     Download
+    </a>
   <article></article>  
 </slide>
     
@@ -46,7 +49,7 @@
     <h2>Motivation: raw genomics data is noisy</h2>
   </hgroup>
   <article data-timings="">
-    <p><center><img src="assets/figures/cellcomp-density.pdf" width=600/></center></p>
+    <p><center><img src="assets/figures/cellcomp-density.png" width=600/></center></p>
 
 <p><a href="http://www.bioconductor.org/packages/release/data/experiment/html/FlowSorted.Blood.450k.html">Jaffe AE. FlowSorted.Blood.450k: Bioconductor R package version 1.2.0.</a></p>
 
@@ -68,7 +71,7 @@
     <h2>Motivation: raw genomics data is noisy</h2>
   </hgroup>
   <article data-timings="">
-    <p><center><img src="assets/figures/cellcomp-boxplot.pdf" width=600/></center></p>
+    <p><center><img src="assets/figures/cellcomp-boxplot.png" width=600/></center></p>
 
 <p><a href="http://www.bioconductor.org/packages/release/data/experiment/html/FlowSorted.Blood.450k.html">Jaffe AE. FlowSorted.Blood.450k: Bioconductor R package version 1.2.0.</a></p>
 
@@ -88,15 +91,6 @@
 
 <p>Taken from <a href="http://astor.som.jhmi.edu/hex/Arrays/add/material/expressionist_series_4.pdf">The Expressionists Seminar (JHU)</a></p>
 
-<!--- 
-
-order value in each array
-take average across all probes
-substitute probe intensity with average
-put in original order
-
--->
-
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -106,7 +100,7 @@ put in original order
     <h2>Back to motivating example</h2>
   </hgroup>
   <article data-timings="">
-    <p><center><img src="assets/figures/cellcomp-boxplot.pdf" width=700/></center></p>
+    <p><center><img src="assets/figures/cellcomp-boxplot.png" width=700/></center></p>
 
 <!--- How different are these 36 distributions? Variability within and between groups? -->
 
@@ -119,7 +113,7 @@ put in original order
     <h2>Back to motivating example (quantile normalized)</h2>
   </hgroup>
   <article data-timings="">
-    <p><center><img src="assets/figures/cellcomp-boxplot-qn.pdf" width=700/></center></p>
+    <p><center><img src="assets/figures/cellcomp-boxplot-qn.png" width=700/></center></p>
 
 <!--- ``In the parts of the distribution with few values (and therefore relatively large interquantile differences), it may introduce considerable changes. The danger is that these large changes could increase the variance across samples for individual features, rather than reducing it as desired."  [Pidsley et al. (2013)]
 
@@ -223,7 +217,7 @@ p &lt;- getBeta(Mset, offset = 100)
     <pre><code class="r">library(quantro)
 library(doParallel)
 registerDoParallel(cores=4) # for permutation testing
-qtest &lt;- quantro(p, pd, B=1000)
+qtest &lt;- quantro(p, phenoDat=pd, B=1000)
 </code></pre>
 
   </article>
@@ -263,7 +257,7 @@ quantro: Test for global diffferences in distributions
     <pre><code class="r">quantroPlot(qtest)
 </code></pre>
 
-<p><center><img src="assets/figures/qtest.pdf" width=600/></center></p>
+<p><center><img src="assets/figures/qtest.png" width=600/></center></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -274,7 +268,7 @@ quantro: Test for global diffferences in distributions
     <h2>Targeted vs Global differences in distributions</h2>
   </hgroup>
   <article data-timings="">
-    <p><center><img src="assets/figures/WhenToQN-Fig6.pdf" width=800/></center></p>
+    <p><center><img src="assets/figures/WhenToQN-Fig6.png" width=800/></center></p>
 
   </article>
   <!-- Presenter Notes -->
